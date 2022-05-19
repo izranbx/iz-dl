@@ -3,6 +3,7 @@ DOWNLOADS/
 
 # Config file
 *.cfg
+.DS_Store
 
 # Dev folder
 .vscode/
