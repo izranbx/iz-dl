@@ -1,17 +1,181 @@
 # izneo-get
-Ce script permet de récupérer une BD présente sur https://www.izneo.com/fr/ dans la limite des capacités de notre compte existant.
 
-Le but est de pouvoir lire une BD sur un support non compatible avec les applications fournies par Izneo. 
-Il est évident que les BD ne doivent en aucun cas être conservées une fois la lecture terminée ou lorsque votre abonnement ne vous permet plus de la lire.
+You can use this script to get any comics that are available in your [izneo](https://izneo.com/) account.
 
+Then you can read them on devices that are not supported by the izneo reader or apps.
 
-## Utilisation
-### izneo_get / izneo_get_selenium
-Si `izneo-get` fonctionne, il est préférable de l'utiliser (plus rapide et pas de transformation faite sur les images sources). `izneo_get_selenium` est une version qui a été développée avant que le déchiffrement des images soit possible.
+Note that you should delete any comics that you have finished reading, and you should not keep any comics that you are not allowed to read.
 
-**Utilisation**  
+1. [izneo-get](#izneo-get)
+   1. [Installing](#installing)
+      1. [Requirements](#requirements)
+      2. [Steps](#steps)
+   2. [Configuration](#configuration)
+      1. [Using Chromium-based browsers or Chrome](#using-chromium-based-browsers-or-chrome)
+      2. [Using Firefox or Firefox-based browsers](#using-firefox-or-firefox-based-browsers)
+   3. [Before running any script](#before-running-any-script)
+   4. [izneo_list.py](#izneo_listpy)
+      1. [Using izneo_list.py](#using-izneo_listpy)
+      2. [Examples of using izneo-list.py](#examples-of-using-izneo-listpy)
+   5. [izneo-get.py](#izneo-getpy)
+      1. [Using izneo-get.py](#using-izneo-getpy)
+      2. [Examples of using izneo-get.py](#examples-of-using-izneo-getpy)
+   6. [Using both izneo_list.py and izneo_get.py](#using-both-izneo_listpy-and-izneo_getpy)
+      1. [Examples of using both](#examples-of-using-both)
+
+## Installing
+
+### Requirements
+
+- Python 3.9
+- git
+
+### Steps
+
+Open a terminal window, clone this repository and go to that folder:
+
+```bash
+git clone https://github.com/izranbx/iz-dl.git && cd iz-dl
 ```
-python izneo_get_selenium.py [-h] [--session-id SESSION_ID] [--cfduid CFDUID]
+
+Use a virtual environment (optional but recommended).
+
+On Windows:
+
+```python
+python -m venv env
+env\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+On macOS:
+
+```python
+python -m venv env
+source env/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt
+```
+
+To leave the virtual environment:
+
+```python
+deactivate
+```
+
+To reactivate the virtual environment from within the same folder:
+
+```python
+source env/bin/activate
+```
+
+## Configuration
+
+To find the required values for authentication, you need to:
+
+1. Duplicate the file `izneo_get.cfg.sample` and name it `izneo_get.cfg`
+2. Log in to your izneo account via your browser
+3. View the cookies in your browser
+4. Copy the values and paste them into your config file `izneo_get.cfg`
+
+value | info
+--- | ---
+cfduid | This is no longer required. This used to be the value of your `PHPSESSID` cookie.
+session_id | This must be the value of your `c03aab1711dbd2a02ea11200dde3e3d1` cookie. See below.
+
+![View of browser cookies](readme/cookies.png "Get the value from your browser cookies")
+
+### Using Chromium-based browsers or Chrome
+
+1. Select Menu --> More Tools --> Development Tools  
+2. Go to Application / Storage / Cookies  
+3. Search for the cookie named `https://www.izneo.com`
+4. Copy the value of your `c03aab1711dbd2a02ea11200dde3e3d1` cookie
+5. Open `izneo_get.cfg` and replace the value of `session_id` with it
+
+### Using Firefox or Firefox-based browsers
+
+1. Go to Tools --> Browser Tools --> Web Developer Tools
+2. Select the Storage tab
+3. Expand the Cookies in the left-hand side bar  
+4. Click the cookie named `https://www.izneo.com`
+5. Open `izneo_get.cfg` and replace the value of `session_id` with it
+
+## Before running any script
+
+1. Open a terminal window
+2. Activate your Python virtual environment
+3. Run the script(s)
+4. Deactivate your Python virtual environment
+
+## izneo_list.py
+
+### Using izneo_list.py
+
+```bash
+python izneo_list.py [-h] [--session-id SESSION_ID] [--cfduid CFDUID]
+                     [--config CONFIG] [--pause PAUSE] [--full-only]
+                     [--series] [--force-title]
+                     search
+
+positional arguments:
+  search                search for a series or directly pass the URL of 
+                        a series to generate a list of all the comics of
+                        that series
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --session-id SESSION_ID, -s SESSION_ID
+                        pass the session ID from your browser
+  --cfduid CFDUID, -c CFDUID
+                        pass the CFDUID if needed
+  --config CONFIG       set the path to a configuration file to avoid having 
+                        to pass the same parameters each time
+  --pause PAUSE         set the time in seconds to wait between each image
+  --full-only           ignore comics that are not available in the subscription
+  --series              only search for series
+  --force-title FORCED_TITLE
+                        rename the files with the FORCED_TITLE instead of using
+                        their original name
+```
+
+### Examples of using izneo-list.py
+
+List the links to a comic series (assuming you have a configuration file):
+
+```bash
+python izneo_list.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275
+```
+
+Same as above and save the list as a text file:
+
+```bash
+python izneo_list.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275 > list.txt
+```
+
+List only the links that are available as part of the subscription for the specified comic series (assuming you have a configuration file):
+
+```bash
+python izneo_list.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275 --full-only
+```
+
+Search for comics:  
+
+```bash
+python izneo_list.py "mushishi"
+```
+
+Search for a comic series and list the links (assuming you have a configuration file):
+
+```bash
+python izneo_list.py "mushishi" --series
+```
+
+## izneo-get.py
+
+### Using izneo-get.py
+
+```bash
+python izneo_get.py [-h] [--session-id SESSION_ID] [--cfduid CFDUID]
                     [--output-folder OUTPUT_FOLDER]
                     [--output-format {jpg,both,cbz}] [--config CONFIG]
                     [--from-page FROM_PAGE] [--limit LIMIT] [--pause PAUSE]
@@ -20,207 +184,93 @@ python izneo_get_selenium.py [-h] [--session-id SESSION_ID] [--cfduid CFDUID]
                     [--encoding ENCODING]
                     url
 
-Script pour sauvegarder une BD Izneo.
-Ce script utilise désormais un driver Chrome piloté par Selenium.
-
 positional arguments:
-  url                   L'URL de la BD à récupérer ou le chemin vers un
-                        fichier local contenant une liste d'URLs
+  url                   pass either the URL to the comic or the path to a
+                        text file that contains a list of URLs
 
 optional arguments:
   -h, --help            show this help message and exit
   --session-id SESSION_ID, -s SESSION_ID
-                        L'identifiant de session
+                        pass the session ID from your browser
   --cfduid CFDUID, -c CFDUID
-                        L'identifiant cfduid
+                        pass the CFDUID if needed
   --output-folder OUTPUT_FOLDER, -o OUTPUT_FOLDER
-                        Répertoire racine de téléchargement
+                        specify the folder where files will be saved 
   --output-format {jpg,both,cbz}, -f {jpg,both,cbz}
-                        Répertoire racine de téléchargement
-  --config CONFIG       Fichier de configuration
+                        specify a format for the files
+  --config CONFIG       set the path to a configuration file to avoid having 
+                        to pass the same parameters each time
   --from-page FROM_PAGE
-                        Première page à récupérer (défaut : 0)
-  --limit LIMIT         Nombre de pages à récupérer au maximum (défaut : 1000)
-  --pause PAUSE         Pause (en secondes) à respecter après chaque
-                        téléchargement d'image
-  --full-only           Ne prend que les liens de BD disponible dans
-                        l'abonnement
-  --continue            Pour reprendre là où on en était
+                        specific the first page to get (default: 0)
+  --limit LIMIT         set the maximum number of pages that you want to 
+                        save (default: 1000)
+  --pause PAUSE         set the time in seconds to wait between each image
+  --full-only           ignore comics that are not available in the subscription
+  --continue            resume where the script left and keep any existant files
   --user-agent USER_AGENT
-                        User agent à utiliser
-  --webp WEBP           Conversion en webp avec une certaine qualité (exemple
-                        : --webp 75)
-  --tree             Pour créer l'arborescence dans le répertoire de
-                        téléchargement
-  --force-title FORCE_TITLE
-                        Le titre à utiliser dans les noms de fichier, à la
-                        place de celui trouvé sur la page
-  --encoding ENCODING   L'encoding du fichier d'entrée de liste d'URLs (ex : "utf-8")
+                        set the user agent for the connection
+  --webp WEBP           convert the source images to WebP using the specified 
+                        quality, for example: --webp 75
+  --tree                create a tree structure in the folder where it saves the
+                        files
+  --force-title FORCED_TITLE
+                        rename the files instead of using their original name
+  --encoding ENCODING   if you are using a text file with a list of URLs and 
+                        running into issues, specify the encoding here, for 
+                        example: "utf-8"
 ```
 
-Exemple :  
-Pour récupérer la BD dans un répertoire d'images (fichier de config présent) :  
-```
-python izneo_get.py https://www.izneo.com/fr/manga-et-simultrad/shonen/assassination-classroom-4744/assassination-classroom-t1-19197
-```
+### Examples of using izneo-get.py
 
+Get a comic (assuming you have a configuration file):
 
-Pour récupérer la BD dans une archive CBZ en forçant le titre (fichier de config présent) :  
-```
-python izneo_get.py https://www.izneo.com/fr/manga-et-simultrad/shonen/assassination-classroom-4744/assassination-classroom-t1-19197 -f cbz --force-title "[Yusei Matsui] Assassination Classroom - Tome 1"
+```bash
+python izneo_get.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275/mushishi-1-70086
 ```
 
-Pour récupérer la BD dans une archive CBZ avec des images converties en WEBP (fichier de config présent) :  
-```
-python izneo_get.py https://www.izneo.com/fr/manga-et-simultrad/shonen/assassination-classroom-4744/assassination-classroom-t1-19197 -f cbz --webp 70
-```
+Get a comic as a CBZ file (assuming you have a configuration file):
 
-Pour récupérer une liste de BDs, dans un répertoire d'images correspondant à l'arborescence du serveur, sans fichier de config présent :  
-```
-python izneo_get.py /tmp/input.txt -c abcdef12345678901234567890123456789012345678 -s abcdefghijkl123456789012345 -o /tmp/DOWNLOADS --tree
+```bash
+python izneo_get.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275/mushishi-1-70086 -f cbz
 ```
 
-Récupérer tous les tomes d'une série : 
-```
-python izneo_list.py --full-only URL > input.txt
-python izneo_get.py --continue --output-format cbz --webp 70 --full-only input.txt
-```
+Get a comic as a CBZ file with the specified name (assuming you have a configuration file):
 
-CFDUID est la valeur de "PHPSESSID" dans les cookies. Cette information semble désormais facultative.  
-SESSION_ID est la valeur de "c03aab1711dbd2a02ea11200dde3e3d1" dans les cookies.  
-
-Pour les obtenir, identifiez vous sur https://www.izneo.com/fr/ et recherchez votre cookie avec votre navigateur web.
-
-#### Chrome  
-Menu --> Plus d'outils --> Outils de développements  
-Application / Storage / Cookies  
-et recherchez le cookie "https://www.izneo.com".  
-
-
-#### Firefox  
-Menu --> Developpement web --> Inspecteur de stockage --> Cookies  
-et recherchez le cookie "https://www.izneo.com".  
-
-
-Ces valeurs peuvent être stockées dans le fichier de configuration "izneo_get_selenium.cfg".  
-
-
-### izneo_list
-**Utilisation**  
-```
-python izneo_list.py [-h] [--session-id SESSION_ID] [--cfduid CFDUID]
-                     [--config CONFIG] [--pause PAUSE] [--full-only]
-                     [--series] [--force-title]
-                     search
-
-Script pour obtenir une liste de BDs Izneo.
-
-positional arguments:
-  search                La page de série qui contient une liste de BDs
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --session-id SESSION_ID, -s SESSION_ID
-                        L'identifiant de session
-  --cfduid CFDUID, -c CFDUID
-                        L'identifiant cfduid
-  --config CONFIG       Fichier de configuration
-  --pause PAUSE         Pause (en secondes) à respecter après chaque appel de
-                        page
-  --full-only           Ne prend que les liens de BD disponible dans
-                        l'abonnement
-  --series              La recherche ne se fait que sur les séries
-  --force-title         Ajoute l'élément "--force-tilte" dans la sortie
+```bash
+python izneo_get.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275/mushishi-1-70086 -f cbz --force-title "[Yuki Urushibara] Mushishi - Volume 1"
 ```
 
-Exemple :  
-Pour récupérer la liste des liens d'une série (fichier de config présent) :  
-```
-python izneo_list.py https://www.izneo.com/fr/manga-et-simultrad/shonen/naruto-567
+Get a comic, convert the images to WebP, and save it as a CBZ file (assuming you have a configuration file):  
+
+```bash
+python izneo_get.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275/mushishi-1-70086 -f cbz --webp 70
 ```
 
-Pour récupérer la liste des liens d'une série, dans la limite des albums complets inclus dans l'abonnement en ajoutant le tag "--force-title" (fichier de config présent) :  
-```
-python izneo_list.py https://www.izneo.com/fr/manga-et-simultrad/shonen/naruto-567 --full-only --force-title
+Get comics from a list as CBZ files (assuming you have a configuration file):
+
+```bash
+python izneo_get.py list.txt -f cbz
 ```
 
-Pour récupérer la liste des liens d'albums qui correspondent à la rechercher "largo" (fichier de config présent) :  
-```
-python izneo_list.py "largo"
+Get comics from a list as CBZ files and matching the file structure on the server (assuming you have a configuration file):
+
+```bash
+python izneo_get.py list.txt -f cbz -tree
 ```
 
-Pour récupérer la liste des liens de séries qui correspondent à la rechercher "largo" (fichier de config présent) :  
-```
-python izneo_list.py "largo" --series
+Get a comic without having a configuration file and passing all the parameters:
+
+```bash
+python izneo_get.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275/mushishi-1-70086 -s abcdefghijkl123456789012345 -f cbz -o /path/to/folder/izneo
 ```
 
+## Using both izneo_list.py and izneo_get.py
 
-## Installation
-### Prérequis
-- Python 3.9+ (non testé avec les versions précédentes)
-- pip (désormais inclus avec Python)
-- Librairies SSL
-- Drivers Chrome (pour la version "Selenium")
-- Chrome (pour la version "Selenium")
+### Examples of using both
 
-#### Sous Windows
-##### Python
-Allez sur ce site :  
-https://www.python.org/downloads/windows/  
-et suivez les instructions d'installation de Python 3.
+Get all comics from a series, using a temporary list (assuming you have a configuration file):
 
-
-##### Librairies SSL
-- Vous pouvez essayer de les installer avec la commande :  
+```bash
+python izneo_list.py https://www.izneo.com/en/manga/historical-fiction/mushishi-32275 > list.txt
+python izneo_get.py -f cbz list.txt
 ```
-pip install pyopenssl
-```
-- Vous pouvez télécharger [OpenSSL pour Windows](http://gnuwin32.sourceforge.net/packages/openssl.htm). 
-
-##### Drivers Chrome (pour la version qui utilise Selenium)
-- Il faut télécharger le fichier "chromedriver.exe" [sur le site de Chromium](https://chromedriver.chromium.org/downloads) et le copier dans le répertoire 
-```
-bin\
-```
-- Il est possible de le renommer en "chromedriverXX.exe" où "XX" est le numéro de la version. Le système ira chercher celui qui convient à votre version de Chrome installée.
-
-
-#### Sous Linux
-Si vous êtes sous Linux, vous n'avez pas besoin de moi pour installer Python, Pip ou SSL...  
-
-
-### Installation
-- En ligne de commande, clonez le repo : 
-```
-git clone https://github.com/izneo-get/izneo-get.git
-cd izneo-get
-```
-- (optionnel) Créez un environnement virtuel Python dédié : 
-```
-python -m venv env
-env\Scripts\activate
-python -m pip install --upgrade pip
-```
-- Installez les dépendances : 
-```
-python -m pip install -r requirements.txt
-```
-
-En cas de problème, on peut installer les dépendances à la main : 
-```
-cd izneo-get
-python -m venv env
-env\Scripts\activate
-python.exe -m pip install --upgrade pip
-python.exe -m pip install pycryptodome
-python.exe -m pip install requests
-python.exe -m pip install beautifulsoup4
-python.exe -m pip install Pillow
-python.exe -m pip install selenium
-```
-  
-  
-ou  
-  
-  
-- Vous pouvez télécharger uniquement le [binaire Windows](https://github.com/izneo-get/izneo-get/releases/latest) (expérimental).  
