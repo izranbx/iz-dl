@@ -11,9 +11,9 @@ Note that you should delete any comics that you have finished reading, and you s
       1. [Requirements](#requirements)
       2. [Steps](#steps)
    2. [Configuration](#configuration)
-      1. [Using Chromium-based browsers or Chrome](#using-chromium-based-browsers-or-chrome)
+      1. [Using Chrome or Chromium-based browsers](#using-chrome-or-chromium-based-browsers)
       2. [Using Firefox or Firefox-based browsers](#using-firefox-or-firefox-based-browsers)
-   3. [Before running any script](#before-running-any-script)
+   3. [Steps to run the script(s)](#steps-to-run-the-scripts)
    4. [izneo_list.py](#izneo_listpy)
       1. [Using izneo_list.py](#using-izneo_listpy)
       2. [Examples of using izneo-list.py](#examples-of-using-izneo-listpy)
@@ -38,34 +38,41 @@ Open a terminal window, clone this repository and go to that folder:
 git clone https://github.com/izranbx/iz-dl.git && cd iz-dl
 ```
 
-Use a virtual environment (optional but recommended).
-
-On Windows:
+Create a virtual environment (optional but recommended):
 
 ```python
 python -m venv env
+```
+
+or
+
+```python
+python3 -m venv env
+```
+
+Activate the virtual environment:
+
+```python
+source env/bin/activate
+```
+
+or activate the virtual environment on Windows:
+
+```python
 env\Scripts\activate
+```
+
+Upgrade and install dependencies:
+
+```python
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-On macOS:
-
-```python
-python -m venv env
-source env/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt
-```
-
-To leave the virtual environment:
+When you're finished, leave the virtual environment:
 
 ```python
 deactivate
-```
-
-To reactivate the virtual environment from within the same folder:
-
-```python
-source env/bin/activate
 ```
 
 ## Configuration
@@ -77,14 +84,18 @@ To find the required values for authentication, you need to:
 3. View the cookies in your browser
 4. Copy the values and paste them into your config file `izneo_get.cfg`
 
-value | info
+Screenshot:
+
+![View of browser cookies](readme/cookies.png "Get the value from your browser cookies")
+
+Description of the configuration variables:
+
+value | description
 --- | ---
 cfduid | This is no longer required. This used to be the value of your `PHPSESSID` cookie.
 session_id | This must be the value of your `c03aab1711dbd2a02ea11200dde3e3d1` cookie. See below.
 
-![View of browser cookies](readme/cookies.png "Get the value from your browser cookies")
-
-### Using Chromium-based browsers or Chrome
+### Using Chrome or Chromium-based browsers
 
 1. Select Menu --> More Tools --> Development Tools  
 2. Go to Application / Storage / Cookies  
@@ -100,12 +111,23 @@ session_id | This must be the value of your `c03aab1711dbd2a02ea11200dde3e3d1` c
 4. Click the cookie named `https://www.izneo.com`
 5. Open `izneo_get.cfg` and replace the value of `session_id` with it
 
-## Before running any script
+## Steps to run the script(s)
 
-1. Open a terminal window
-2. Activate your Python virtual environment
-3. Run the script(s)
-4. Deactivate your Python virtual environment
+1. Update the values in your config file
+2. Open a terminal window
+3. Go to the folder where you installed these scripts
+4. Activate your Python virtual environment
+
+   ```python
+   source env/bin/activate
+   ```
+
+5. Run the script(s) — see examples below
+6. Deactivate your Python virtual environment
+
+   ```python
+   deactivate
+   ```
 
 ## izneo_list.py
 
