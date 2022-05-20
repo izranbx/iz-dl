@@ -9,7 +9,7 @@ Note that you should delete any comics that you have finished reading, and you s
 1. [izneo-get](#izneo-get)
    1. [Installing](#installing)
       1. [Requirements](#requirements)
-      2. [Steps](#steps)
+      2. [Steps to install the scripts](#steps-to-install-the-scripts)
    2. [Configuration](#configuration)
       1. [Using Chrome or Chromium-based browsers](#using-chrome-or-chromium-based-browsers)
       2. [Using Firefox or Firefox-based browsers](#using-firefox-or-firefox-based-browsers)
@@ -27,10 +27,21 @@ Note that you should delete any comics that you have finished reading, and you s
 
 ### Requirements
 
-- Python 3.9
-- git
+- [Python 3.9+](https://www.python.org/downloads/)
+- [git](https://git-scm.com/downloads)
 
-### Steps
+To check if you have them, open a terminal window and run the commands below.
+
+```bash
+# For Python, either
+python --version
+# or
+python3 --version
+# For gitL
+git --version
+```
+
+### Steps to install the scripts
 
 Open a terminal window, clone this repository and go to that folder:
 
